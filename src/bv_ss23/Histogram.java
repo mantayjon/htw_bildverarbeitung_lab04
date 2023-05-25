@@ -10,6 +10,8 @@ package bv_ss23;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.Arrays;
+
 public class Histogram {
 
     private static final int grayLevels = 256;
@@ -33,18 +35,16 @@ public class Histogram {
 
     public void setImageRegion(RasterImage image, int regionStartX, int regionStartY, int regionWidth, int regionHeight) {
 
+        Arrays.fill(histogram, 0);
         for (int y = regionStartY; y < regionStartY + regionHeight; y++) {
             for (int x = regionStartX; x < regionStartX + regionWidth; x++) {
 
-                int pos = 0;
-                //int grayValue = argb[pos];
-                //histogram[grayValue]++;
+                int pos = y * image.width + x;
+                int index = image.argb[pos] & 0xff;
+
+                histogram[index]++;
             }
         }
-        // TODO: calculate histogram[] out of the gray values found the given image region
-
-        // graustufen zählen, -> dafür über alle pixel laufen und im array eine zahl hochzählen
-        // aber das nur in der region machen ( loop von x+w)
 
     }
 
@@ -84,22 +84,20 @@ public class Histogram {
         gc.setStroke(lineColor);
         gc.setLineWidth(1);
 
-        // TODO: draw histogram[] into the gc graphic context
-        // Note that we need to add 0.5 to all coordinates to align points to pixel centers
+        double max = 0;
+
+        for (int i = 0; i < histogram.length; i++) {
+            if (histogram[i] > max) {
+                max = histogram[i];
+            }
+        }
+        double stauchung = maxHeight / max;
 
         double shift = 0.5;
 
-        // Remark: This is some dummy code to give you an idea for line drawing
-        gc.strokeLine(shift, shift, grayLevels - 1 + shift, maxHeight - 1 + shift);
-        gc.strokeLine(grayLevels - 1 + shift, shift, shift, maxHeight - 1 + shift);
-
-       // for(int i = 0; i < grayLevels; i ++){
-       //     gc.strokeLine(i, , grayLevels - 1 + shift, maxHeight - 1 + shift);
-        //}
-
-        // male senkrechte linien von x achse nach oben ( grayLevels, 0 , grayLevels , häufigkeit)
-        // die höhe ist das max vom array mit dem bild
-
+        for (int i = 0; i < grayLevels; i++) {
+            gc.strokeLine(i + shift, maxHeight + shift, i + shift, maxHeight - (histogram[i] * stauchung) + shift);
+        }
     }
 
 }

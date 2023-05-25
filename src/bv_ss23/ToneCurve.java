@@ -30,18 +30,24 @@ public class ToneCurve {
 
         for (int i = 0; i < grayTable.length; i++) {
             grayTable[i] = i;
-            grayTable[i] = grayTable[i] + brightness;
-            grayTable[i] = (int) (contrast * (grayTable[i] - 128) + 128);
-            grayTable[i] = (int) ((255 * (Math.pow(grayTable[i], (1 / gamma)))) / (Math.pow(255, (1 / gamma))));
 
+            grayTable[i] = Math.max(Math.min(grayTable[i] + brightness,255),0);
+            grayTable[i] = (int) Math.min(Math.max((contrast * (grayTable[i] - 128) + 128),0),255);
+            grayTable[i] = (int) Math.min(Math.max(((255 * (Math.pow(grayTable[i], (1 / gamma)))) /
+                    (Math.pow(255, (1 / gamma)))),0),255);
 
         }
     }
 
     public void applyTo(RasterImage image) {
+        image.convertToGray();
 
-        // TODO: apply the gray value mapping to the given image
+        for (int i = 0; i < image.argb.length; i++) {
+            int index = image.argb[i] & 0xff;
+            int grey = grayTable[index];
 
+            image.argb[i] = (0xFF << 24) | (grey << 16) | (grey << 8) | grey;
+        }
     }
 
     public void draw(Color lineColor) {
@@ -51,22 +57,13 @@ public class ToneCurve {
         gc.setLineWidth(3);
 
         double shift = 0.5;
-        
+
         gc.beginPath();
         gc.moveTo(0 + shift, grayLevels - grayTable[0] + shift);
-        int line = 0;
 
         for (int i = 0; i < grayTable.length; i++) {
-            if (grayLevels - grayTable[i] < 0) {
-                line = 0;
-            } else if (grayLevels - grayTable[i] > 255) {
-                line = 255;
-            } else {
-                line = grayLevels - grayTable[i];
-            }
-            gc.lineTo(i + shift, line + shift);
+            gc.lineTo(i + shift, grayLevels - grayTable[i] + shift);
         }
-
         gc.stroke();
     }
 
