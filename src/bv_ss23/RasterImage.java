@@ -101,7 +101,7 @@ public class RasterImage {
 			for (int x = 0; x < width; x++) {
 				int pos = y * width + x;
 				int argValue = argb[pos];
-				
+
 				int r = (argValue >> 16) & 0xff;
 				int g = (argValue >> 8) & 0xff;
 				int b = argValue & 0xff;
