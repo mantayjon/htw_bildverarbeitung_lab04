@@ -97,8 +97,20 @@ public class RasterImage {
 	// image point operations to be added here
 
 	public void convertToGray() {
-		
-		// TODO: convert the image to grayscale
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int pos = y * width + x;
+				int argValue = argb[pos];
+				
+				int r = (argValue >> 16) & 0xff;
+				int g = (argValue >> 8) & 0xff;
+				int b = argValue & 0xff;
+
+				int grey = (r + g + b) / 3;
+
+				argb[pos] = (0xFF << 24) | (grey << 16) | (grey << 8) | grey;
+			}
+		}
 
 	}
  		   	  	  		
