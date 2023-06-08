@@ -49,31 +49,77 @@ public class Histogram {
     }
 
     public Integer getMinimum() {
-        // Will be used in Exercise 5.
-        return null;
+        int min = 0;
+        for (int i = 0; i < histogram.length; i++) {
+            if (histogram[i] != 0) {
+                min = i;
+                break;
+            }
+        }
+        return min;
+
     }
 
     public Integer getMaximum() {
-        // Will be used in Exercise 5.
-        return null;
+        int max = 1234;
+        for (int i = 0; i < histogram.length; i++) {
+            if (histogram[255 - i] != 0) {
+                max = 255 - i;
+                break;
+            }
+        }
+        return max;
     }
 
     public Double getMean() {
-        // Will be used in Exercise 5.
-        return null;
+        double mean = 0;
+        int n = 0;
+
+        for (int i = 0; i < histogram.length; i++) {
+            if (histogram[i] != 0) {
+                mean += i * histogram[i];
+                n += histogram[i];
+            }
+        }
+        mean = mean / n;
+
+        return mean;
     }
 
     public Integer getMedian() {
-        // Will be used in Exercise 5.
-        return null;
+
+        int n = sumPixel();
+        int median = 0;
+
+        n = n / 2;
+
+        for (int i = 0; i < histogram.length; i++) {
+            if (n > 0) {
+                n -= histogram[i];
+                median = i;
+            }
+        }
+
+        return median;
     }
 
     public Double getVariance() {
-        // Will be used in Exercise 5.
-        return null;
+
+        int n = sumPixel();
+        double mean = getMean();
+        double variance = 0;
+
+        for (int i = 0; i < histogram.length; i++) {
+            variance += Math.pow(i-mean,2) * histogram[i];
+        }
+
+        return variance/n;
     }
 
     public Double getEntropy() {
+        int n = sumPixel();
+        // abfrage ob gleich null (h/n)
+        // auch in double dividiren
         // Will be used in Exercise 5.
         return null;
     }
@@ -86,9 +132,9 @@ public class Histogram {
 
         double max = 0;
 
-        for (int i = 0; i < histogram.length; i++) {
-            if (histogram[i] > max) {
-                max = histogram[i];
+        for (int j : histogram) {
+            if (j > max) {
+                max = j;
             }
         }
         double stauchung = maxHeight / max;
@@ -96,8 +142,17 @@ public class Histogram {
         double shift = 0.5;
 
         for (int i = 0; i < grayLevels; i++) {
-            gc.strokeLine(i + shift, maxHeight + shift, i + shift, maxHeight - (histogram[i] * stauchung) + shift);
+            gc.strokeLine(i + shift, maxHeight + shift,
+                    i + shift, maxHeight - (histogram[i] * stauchung) + shift);
         }
+    }
+
+    public Integer sumPixel(){
+        int n = 0;
+        for (int j : histogram) {
+            n += j;
+        }
+        return n;
     }
 
 }
