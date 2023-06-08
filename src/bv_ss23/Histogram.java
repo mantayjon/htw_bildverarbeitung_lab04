@@ -110,18 +110,25 @@ public class Histogram {
         double variance = 0;
 
         for (int i = 0; i < histogram.length; i++) {
-            variance += Math.pow(i-mean,2) * histogram[i];
+            variance += Math.pow(i - mean, 2) * histogram[i];
         }
 
-        return variance/n;
+        return variance / n;
     }
 
     public Double getEntropy() {
-        int n = sumPixel();
-        // abfrage ob gleich null (h/n)
-        // auch in double dividiren
-        // Will be used in Exercise 5.
-        return null;
+        double n = sumPixel();
+        double entropy = 0;
+
+        for (int i = 0; i < histogram.length; i++) {
+
+            if (histogram[i] != 0) {
+                entropy += ((double) histogram[i] / n) * (Math.log((double) histogram[i] / n) / Math.log(2));
+
+            }
+        }
+
+        return - entropy;
     }
 
     public void draw(Color lineColor) {
@@ -147,7 +154,7 @@ public class Histogram {
         }
     }
 
-    public Integer sumPixel(){
+    public Integer sumPixel() {
         int n = 0;
         for (int j : histogram) {
             n += j;
